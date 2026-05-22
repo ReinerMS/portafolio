@@ -68,7 +68,7 @@ export default function Footer() {
             <span className="w-2 h-4 bg-lime-400 opacity-80 animate-pulse" />
           </Link>
 
-          <p className="text-zinc-600 text-xs leading-relaxed max-w-[200px]">
+          <p className="text-zinc-600 text-xs leading-relaxed max-w-50">
             {ME.role} — construyendo interfaces mientras sigo aprendiendo.
           </p>
 
