@@ -1,12 +1,11 @@
 import './App.css'
-import TodoApp from './components/TodoApp'
+import MainLayout from './layouts/MainLayout';
 
 function App() {
 
   return (
     <>
-      <TodoApp />
-      <h1>Hello world</h1>
+      <MainLayout/>
     </>
   );
 }
