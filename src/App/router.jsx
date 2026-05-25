@@ -16,9 +16,10 @@ export const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "about", element: <About /> },
       { path: "projects", element: <Projects /> },
-      // :id es un parámetro dinámico — /projects/1, /projects/2, etc.
       { path: "projects/:id", element: <ProjectDetail /> },
     ],
   },
   { path: "*", element: <NotFound /> },
-]);
+], {
+  basename: '/portafolio/', // ← esto es lo único que cambia
+});
