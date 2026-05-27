@@ -8,6 +8,8 @@ import Projects from "../pages/Projects";
 import ProjectDetail from "../pages/ProjectDetail";
 import NotFound from "../pages/NotFound";
 
+const basename = import.meta.env.PROD ? "/portafolio" : "/";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -21,5 +23,5 @@ export const router = createBrowserRouter([
   },
   { path: "*", element: <NotFound /> },
 ], {
-  basename: '/portafolio/', // ← esto es lo único que cambia
+  basename,
 });

@@ -6,7 +6,7 @@ import { router } from "./App/router";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
-    <StrictMode>
-        <RouterProvider router={router} />
-    </StrictMode>
-)
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>
+);

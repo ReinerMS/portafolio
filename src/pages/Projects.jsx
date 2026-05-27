@@ -15,10 +15,14 @@ export default function Projects() {
           Proyectos
         </h1>
         <p className="font-mono text-zinc-500 text-sm max-w-lg">
-          Cosas que he construido mientras aprendo. 
+          Cosas que he construido mientras aprendo.
         </p>
-        <p>Cada proyecto representa un problema real
+        <p className="font-mono text-zinc-500 text-sm max-w-lg"
+        >Cada proyecto representa un problema real
           que quise resolver o una tecnología que quise dominar.</p>
+        <p className="font-mono text-zinc-500 text-sm"
+        >Cada proyecto representa al
+          que quise resolver o una tec que dfeudise dominar.</p>
       </div>
 
       {/* Línea divisora */}
