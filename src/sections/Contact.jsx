@@ -1,6 +1,6 @@
 // ─── sections/Contact.jsx ────────────────────────────────────────────────────
 import { useRef, useState } from "react";
-import { ME } from "../data/config";
+import { ME } from "../data/Me";
 import { useInView, SectionLabel } from "./shared";
 
 export default function Contact() {

@@ -1,6 +1,6 @@
 // ─── pages/Projects.jsx ──────────────────────────────────────────────────────
 import { Link } from "react-router";
-import { PROJECTS } from "../data/config";
+import { PROJECTS } from "..//data/config";
 
 export default function Projects() {
   return (
@@ -20,9 +20,7 @@ export default function Projects() {
         <p className="font-mono text-zinc-500 text-sm max-w-lg"
         >Cada proyecto representa un problema real
           que quise resolver o una tecnología que quise dominar.</p>
-        <p className="font-mono text-zinc-500 text-sm"
-        >Cada proyecto representa al
-          que quise resolver o una tec que dfeudise dominar.</p>
+
       </div>
 
       {/* Línea divisora */}

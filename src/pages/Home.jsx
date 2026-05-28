@@ -1,4 +1,3 @@
-
 import Hero from "../sections/Hero";
 import Contact from "../sections/Contact";
 

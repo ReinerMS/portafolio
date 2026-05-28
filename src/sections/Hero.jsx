@@ -1,7 +1,7 @@
 // ─── sections/Hero.jsx ───────────────────────────────────────────────────────
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { ME } from "../data/config";
+import { ME } from "../data/Me";
 
 // Anima un texto caracter por caracter
 function useTypewriter(text, speed = 50, delay = 0) {

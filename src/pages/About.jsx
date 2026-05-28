@@ -1,6 +1,17 @@
 // ─── pages/About.jsx ─────────────────────────────────────────────────────────
 import { Link } from "react-router";
-import { ME, SKILLS } from "../data/config";
+import { ME } from "../data/Me";
+
+const SKILLS = [
+  "React",
+  "JavaScript",
+  "Tailwind CSS",
+  "HTML / CSS",
+  "Git",
+  "Node.js",
+  "Python",
+  "SQL",
+  "REST APIs",]
 
 export default function About() {
   return (
