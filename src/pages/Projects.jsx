@@ -1,6 +1,6 @@
 // ─── pages/Projects.jsx ──────────────────────────────────────────────────────
 import { Link } from "react-router";
-import { PROJECTS } from "..//data/config";
+import { PROJECTS } from "../data/config";
 
 export default function Projects() {
   return (

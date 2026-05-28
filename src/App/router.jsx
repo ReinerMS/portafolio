@@ -1,11 +1,11 @@
 import { createBrowserRouter } from "react-router";
 
 import MainLayout from "../layouts/MainLayout";
-import Home from "../Pages/Home";
-import About from "../Pages/About";
-import Projects from "../Pages/Projects";
-import ProjectDetail from "../Pages/ProjectDetail";
-import NotFound from "../Pages/NotFound";
+import Home from "../pages/Home";
+import About from "../pages/About";
+import Projects from "../pages/Projects";
+import ProjectDetail from "../pages/ProjectDetail";
+import NotFound from "../pages/NotFound";
 
 const basename = import.meta.env.PROD ? "/portafolio" : "/";
 
