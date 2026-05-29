@@ -3,24 +3,27 @@ import { useParams, Link, Navigate } from "react-router";
 import { PROJECTS } from "../data/config";
 
 export default function ProjectDetail() {
-  // useParams lee el :id de la URL — si estás en /projects/2, id = "2"
   const { id } = useParams();
-  // Busca el proyecto cuyo id coincida. Como la URL es string, usamos Number(id)
   const project = PROJECTS.find((p) => p.id === Number(id));
 
   const [characters, setCharacters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [totalCount, setTotalCount] = useState(0);
+  const [nextPage, setNextPage] = useState(null)
 
   useEffect(() => {
     if (!project) return;
 
     async function getCharacters() {
       try {
-        const response = await fetch(project.apiUrl);
+        const response = await fetch(project.apiUrlcharacter);
         const data = await response.json();
 
-        setCharacters(data.results);
+        setCharacters((prev) => [...prev, ...data.results]);
+        setNextPage(data.info.next);
+        setTotalCount(data.info.count);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -30,6 +33,24 @@ export default function ProjectDetail() {
 
     getCharacters();
   }, [project]);
+
+  async function loadAll() {
+    try {
+      let url = nextPage;
+
+      while (url) {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        setCharacters((prev) => [...prev, ...data.results]);
+        url = data.info.next;
+      }
+
+      setVisibleCount(totalCount);
+    } catch (error) {
+      setError(error.message); // ya tienes este estado, úsalo
+    }
+  }
 
   if (!project) return <Navigate to="*" replace />;
 
@@ -70,10 +91,16 @@ export default function ProjectDetail() {
       <div className="h-px bg-zinc-800 mb-10" />
 
       {/* Descripción larga (body) */}
-      <p className="font-mono text-zinc-400 text-sm leading-relaxed mb-12">
+      <p className="font-mono text-zinc-400 text-sm leading-relaxed mb-4">
         {/* Si no hay body, usa desc como fallback */}
         {project.body || project.desc}
       </p>
+
+      <div>
+        <h1 className="font-mono text-lime-400 text-sm leading-relaxed">
+          {project.desc2}
+        </h1>
+      </div>
 
       <div className="text-white">
         {loading && (
@@ -89,13 +116,16 @@ export default function ProjectDetail() {
         )}
 
         {!loading && !error && (
-          <section className="mt-16">
+          <section className="mt-6 mb-6">
+
             <h2 className="font-mono text-white text-2xl font-bold mb-8">
               Personajes de Rick and Morty
+              <span className="text-zinc-500 text-sm ml-3">
+                ({totalCount} en total)
+              </span>
             </h2>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6">
-              {characters.map((character) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+              {characters.slice(0, visibleCount).map((character) => (
                 <article
                   key={character.id}
                   className="group bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden hover:border-lime-400 transition-all"
@@ -121,10 +151,10 @@ export default function ProjectDetail() {
 
                     <p
                       className={`font-mono text-sm mt-3 ${character.status === "Alive"
-                          ? "text-lime-400"
-                          : character.status === "Dead"
-                            ? "text-red-400"
-                            : "text-yellow-400"
+                        ? "text-lime-400"
+                        : character.status === "Dead"
+                          ? "text-red-400"
+                          : "text-yellow-400"
                         }`}
                     >
                       Estado: {character.status}
@@ -133,20 +163,57 @@ export default function ProjectDetail() {
                 </article>
               ))}
             </div>
+            <div className="flex gap-4 mt-8">
+              {/* Botón cargar más — aparece si aún no ves todos los cargados */}
+              {visibleCount < characters.length && (
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 6)}
+                  className="font-mono text-xs tracking-widest uppercase px-6 py-3 border border-zinc-700 text-zinc-400 rounded hover:border-lime-400 hover:text-lime-400 transition-all"
+                >
+                  cargar más ↓
+                </button>
+              )}
+
+              {/* Botón ver todos — aparece si aún no cargaste todos de la API */}
+              {characters.length < totalCount && (
+                <button
+                  onClick={loadAll}
+                  className="font-mono text-xs tracking-widest uppercase px-6 py-3 border border-zinc-700 text-zinc-400 rounded hover:border-lime-400 hover:text-lime-400 transition-all"
+                >
+                  ver todos ↓
+                </button>
+              )}
+
+              {/* Botón ver menos — aparece si estás viendo más de 6 */}
+              {visibleCount > 6 && (
+                <button
+                  onClick={() => setVisibleCount(6)}
+                  className="font-mono text-xs tracking-widest uppercase px-6 py-3 border border-zinc-700 text-zinc-400 rounded hover:border-red-400 hover:text-red-400 transition-all"
+                >
+                  ver menos ↑
+                </button>
+              )}
+            </div>
+
           </section>
         )}
       </div>
 
       {/* Links */}
       <div className="flex gap-4">
-        <a
-          href={project.repo}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-mono text-xs tracking-widest uppercase px-6 py-3 bg-lime-400 text-zinc-950 font-bold rounded hover:bg-lime-300 transition-colors"
-        >
-          ver código ↗
-        </a>
+
+        {project.repo && (
+          <a
+            href={project.repo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-xs tracking-widest uppercase px-6 py-3 bg-lime-400 text-zinc-950 font-bold rounded hover:bg-lime-300 transition-colors"
+          >
+            ver código ↗
+          </a>
+        )
+        }
+
         {project.live && (
           <a
             href={project.live}
