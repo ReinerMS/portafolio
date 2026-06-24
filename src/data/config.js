@@ -1,19 +1,127 @@
-
-
-// Cada proyecto tiene un `id` único — se usa para la URL de detalle: /projects/1
 export const PROJECTS = [
   {
     id: 1,
-    title: "API Rick and Morty",
-    desc: "Aplicación web conectada a la API de Rick and Morty.",
-    desc2: "Amplicar lo que hemos aprendido",
-    tech: ["React", "API REST", "Tailwind"],
-    repo: null,
-    live: null,
-    image: "/projects/alfa.png",
+    slug: "rick-and-morty",
+    type: "api",
 
-    apiUrlcharacter: "https://rickandmortyapi.com/api/character",
-    apiUrllocations: "https://rickandmortyapi.com/api/location",
-    apiUrlepisodes: "https://rickandmortyapi.com/api/episode"
+    title: "API Rick and Morty",
+
+    shortDescription:
+      "Aplicación web conectada a la API de Rick and Morty.",
+
+    description: `
+      Proyecto desarrollado para practicar consumo de APIs REST,
+      manejo de estados, paginación, búsqueda y renderizado dinámico
+      de información.
+    `,
+
+    technologies: [
+      "React",
+      "Tailwind",
+      "API REST"
+    ],
+
+    status: "completed",
+
+    links: {
+      repository: null,
+      liveDemo: null
+    },
+
+    heroImage: "/projects/rickmorty/hero.png",
+
+    gallery: [
+      "/projects/rickmorty/home.png",
+      "/projects/rickmorty/characters.png",
+      "/projects/rickmorty/detail.png"
+    ],
+
+    features: [
+      "Listado de personajes",
+      "Consumo de API REST",
+      "Paginación",
+      "Carga dinámica",
+      "Diseño responsive"
+    ],
+
+    api: {
+      characters: "https://rickandmortyapi.com/api/character",
+      locations: "https://rickandmortyapi.com/api/location",
+      episodes: "https://rickandmortyapi.com/api/episode"
+    },
+
+    sections: [
+      {
+        type: "text",
+        title: "Objetivo",
+        content:
+          "Aprender integración con APIs REST utilizando React."
+      },
+      {
+        type: "text",
+        title: "Desafíos",
+        content:
+          "Manejo de grandes cantidades de registros y paginación."
+      }
+    ]
   },
+
+  {
+    id: 2,
+    slug: "globalbet",
+
+    type: "webapp",
+
+    title: "GlobalBet",
+
+    shortDescription:
+      "Plataforma web para apuestas deportivas.",
+
+    description: `
+      Sistema completo para gestión de apuestas deportivas,
+      cuotas, usuarios, transacciones y administración.
+    `,
+
+    technologies: [
+      "React",
+      "Tailwind",
+      "Supabase",
+      "Node.js",
+      "APIs"
+    ],
+
+    status: "development",
+
+    links: {
+      repository: null,
+      liveDemo: null
+    },
+
+    heroImage: "/projects/globalbet/hero.png",
+
+    gallery: [
+      "/projects/globalbet/home.png",
+      "/projects/globalbet/matches.png",
+      "/projects/globalbet/dashboard.png"
+    ],
+
+    features: [
+      "Autenticación",
+      "Cuotas deportivas",
+      "Dashboard",
+      "Panel administrativo",
+      "Historial de apuestas"
+    ],
+
+    api: null,
+
+    sections: [
+      {
+        type: "text",
+        title: "Objetivo",
+        content:
+          "Crear una plataforma moderna para apuestas deportivas."
+      }
+    ]
+  }
 ];

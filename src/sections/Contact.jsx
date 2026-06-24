@@ -48,7 +48,7 @@ export default function Contact() {
 
         <div className="flex gap-3">
           <a
-            href={ME.github}
+            href={ME.github || "#"}
             target="_blank"
             rel="noopener noreferrer"
             className="font-mono text-xs tracking-widest uppercase px-5 py-2.5 border border-zinc-700 text-zinc-400 rounded hover:border-lime-400 hover:text-lime-400 transition-all duration-150"

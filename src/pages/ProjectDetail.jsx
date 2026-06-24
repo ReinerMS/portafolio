@@ -1,229 +1,357 @@
-import { useEffect, useState } from "react";
-import { useParams, Link, Navigate } from "react-router";
+// ─── pages/ProjectDetail.jsx ────────────────────────────────────────────────
+import { Link, Navigate, useParams } from "react-router";
 import { PROJECTS } from "../data/config";
 
 export default function ProjectDetail() {
   const { id } = useParams();
-  const project = PROJECTS.find((p) => p.id === Number(id));
 
-  const [characters, setCharacters] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(6);
-  const [totalCount, setTotalCount] = useState(0);
-  const [nextPage, setNextPage] = useState(null)
+  const project = PROJECTS.find(
+    (p) => p.id === Number(id)
+  );
 
-  useEffect(() => {
-    if (!project) return;
-
-    async function getCharacters() {
-      try {
-        const response = await fetch(project.apiUrlcharacter);
-        const data = await response.json();
-
-        setCharacters((prev) => [...prev, ...data.results]);
-        setNextPage(data.info.next);
-        setTotalCount(data.info.count);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    getCharacters();
-  }, [project]);
-
-  async function loadAll() {
-    try {
-      let url = nextPage;
-
-      while (url) {
-        const response = await fetch(url);
-        const data = await response.json();
-
-        setCharacters((prev) => [...prev, ...data.results]);
-        url = data.info.next;
-      }
-
-      setVisibleCount(totalCount);
-    } catch (error) {
-      setError(error.message); // ya tienes este estado, úsalo
-    }
+  if (!project) {
+    return <Navigate to="/projects" replace />;
   }
 
-  if (!project) return <Navigate to="*" replace />;
+  const statusColors = {
+    completed:
+      "border-lime-400 text-lime-400 bg-lime-400/10",
+    development:
+      "border-yellow-400 text-yellow-400 bg-yellow-400/10",
+    archived:
+      "border-red-400 text-red-400 bg-red-400/10",
+  };
+
+  const renderExtra = () => {
+  switch (project.type) {
+    case "api":
+      return <ApiSection project={project} />;
+
+    case "webapp":
+      return <WebAppSection project={project} />;
+
+    default:
+      return null;
+  }
+};
 
   return (
-    <main className="bg-zinc-950 min-h-screen pt-28 pb-24 px-6 mx-auto">
+    <main className="bg-zinc-950 min-h-screen pt-28 pb-24">
+      <div className="max-w-7xl mx-auto px-6">
 
-      {/* Botón volver */}
-      <Link
-        to="/projects"
-        className="inline-flex items-center gap-2 font-mono text-xs text-zinc-500 hover:text-lime-400 transition-colors mb-12 tracking-widest uppercase"
-      >
-        ← volver a proyectos
-      </Link>
+        {/* Navegación */}
+        <Link
+          to="/projects"
+          className="
+            inline-flex
+            items-center
+            gap-2
+            mb-10
+            font-mono
+            text-xs
+            uppercase
+            tracking-widest
+            text-zinc-500
+            hover:text-lime-400
+            transition-colors
+          "
+        >
+          ← volver a proyectos
+        </Link>
 
-      {/* Número */}
-      <p className="font-mono text-zinc-700 text-xs mb-3">
-        {String(project.id).padStart(2, "0")}
-      </p>
+        {/* Hero */}
+        <section className="mb-12">
+          <div className="overflow-hidden rounded-2xl border border-zinc-800">
+            <img
+              src={project.heroImage}
+              alt={project.title}
+              className="
+                w-full
+                h-62.5
+                md:h-125
+                object-cover
+              "
+            />
+          </div>
+        </section>
 
-      {/* Título */}
-      <h1 className="font-mono font-black text-white text-4xl md:text-5xl tracking-tighter mb-6">
-        {project.title}
-      </h1>
+        {/* Header */}
+        <section className="mb-14">
+          <div className="flex flex-wrap items-center gap-4 mb-4">
 
-      {/* Tech stack */}
-      <div className="flex flex-wrap gap-2 mb-10">
-        {project.tech.map((t) => (
-          <span
-            key={t}
-            className="font-mono text-xs px-3 py-1.5 rounded border border-zinc-700 text-zinc-400"
+            <span className="font-mono text-xs text-zinc-600">
+              #{String(project.id).padStart(2, "0")}
+            </span>
+
+            <span
+              className={`
+                px-3
+                py-1
+                rounded-full
+                text-xs
+                font-mono
+                border
+                ${statusColors[project.status] ||
+                "border-zinc-700 text-zinc-400"}
+              `}
+            >
+              {project.status}
+            </span>
+
+            <span className="font-mono text-xs text-zinc-500 uppercase">
+              {project.type}
+            </span>
+          </div>
+
+          <h1
+            className="
+              text-white
+              text-4xl
+              md:text-6xl
+              font-black
+              tracking-tight
+              mb-6
+            "
           >
-            {t}
-          </span>
-        ))}
-      </div>
+            {project.title}
+          </h1>
 
-      {/* Línea divisora */}
-      <div className="h-px bg-zinc-800 mb-10" />
-
-      {/* Descripción larga (body) */}
-      <p className="font-mono text-zinc-400 text-sm leading-relaxed mb-4">
-        {/* Si no hay body, usa desc como fallback */}
-        {project.body || project.desc}
-      </p>
-
-      <div>
-        <h1 className="font-mono text-lime-400 text-sm leading-relaxed">
-          {project.desc2}
-        </h1>
-      </div>
-
-      <div className="text-white">
-        {loading && (
-          <p className="font-mono text-zinc-500">
-            Cargando personajes...
+          <p
+            className="
+              text-zinc-400
+              text-lg
+              leading-relaxed
+              max-w-4xl
+            "
+          >
+            {project.description}
           </p>
-        )}
+        </section>
 
-        {error && (
-          <p className="font-mono text-red-400">
-            {error}
-          </p>
-        )}
+        {/* Tecnologías */}
+        <section className="mb-14">
+          <h2 className="text-white text-2xl font-bold mb-6">
+            Tecnologías
+          </h2>
 
-        {!loading && !error && (
-          <section className="mt-6 mb-6">
-
-            <h2 className="font-mono text-white text-2xl font-bold mb-8">
-              Personajes de Rick and Morty
-              <span className="text-zinc-500 text-sm ml-3">
-                ({totalCount} en total)
+          <div className="flex flex-wrap gap-3">
+            {project.technologies?.map((tech) => (
+              <span
+                key={tech}
+                className="
+                  px-4
+                  py-2
+                  rounded-lg
+                  border
+                  border-zinc-700
+                  text-zinc-300
+                  font-mono
+                  text-sm
+                  bg-zinc-900
+                "
+              >
+                {tech}
               </span>
+            ))}
+          </div>
+        </section>
+
+        {/* Features */}
+        {project.features?.length > 0 && (
+          <section className="mb-14">
+            <h2 className="text-white text-2xl font-bold mb-6">
+              Características
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-              {characters.slice(0, visibleCount).map((character) => (
-                <article
-                  key={character.id}
-                  className="group bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden hover:border-lime-400 transition-all"
+
+            <div className="grid md:grid-cols-2 gap-4">
+              {project.features.map((feature) => (
+                <div
+                  key={feature}
+                  className="
+                    border
+                    border-zinc-800
+                    bg-zinc-900/40
+                    rounded-xl
+                    p-5
+                  "
                 >
-                  <img
-                    src={character.image}
-                    alt={character.name}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <span className="text-lime-400 mr-2">✓</span>
 
-                  <div className="p-5">
-                    <h3 className="font-mono text-white font-bold text-lg mb-2">
-                      {character.name}
-                    </h3>
-
-                    <p className="font-mono text-zinc-400 text-sm">
-                      Especie: {character.species}
-                    </p>
-
-                    <p className="font-mono text-zinc-400 text-sm">
-                      Género: {character.gender}
-                    </p>
-
-                    <p
-                      className={`font-mono text-sm mt-3 ${character.status === "Alive"
-                        ? "text-lime-400"
-                        : character.status === "Dead"
-                          ? "text-red-400"
-                          : "text-yellow-400"
-                        }`}
-                    >
-                      Estado: {character.status}
-                    </p>
-                  </div>
-                </article>
+                  <span className="text-zinc-300">
+                    {feature}
+                  </span>
+                </div>
               ))}
             </div>
-            <div className="flex gap-4 mt-8">
-              {/* Botón cargar más — aparece si aún no ves todos los cargados */}
-              {visibleCount < characters.length && (
-                <button
-                  onClick={() => setVisibleCount((prev) => prev + 6)}
-                  className="font-mono text-xs tracking-widest uppercase px-6 py-3 border border-zinc-700 text-zinc-400 rounded hover:border-lime-400 hover:text-lime-400 transition-all"
-                >
-                  cargar más ↓
-                </button>
-              )}
-
-              {/* Botón ver todos — aparece si aún no cargaste todos de la API */}
-              {characters.length < totalCount && (
-                <button
-                  onClick={loadAll}
-                  className="font-mono text-xs tracking-widest uppercase px-6 py-3 border border-zinc-700 text-zinc-400 rounded hover:border-lime-400 hover:text-lime-400 transition-all"
-                >
-                  ver todos ↓
-                </button>
-              )}
-
-              {/* Botón ver menos — aparece si estás viendo más de 6 */}
-              {visibleCount > 6 && (
-                <button
-                  onClick={() => setVisibleCount(6)}
-                  className="font-mono text-xs tracking-widest uppercase px-6 py-3 border border-zinc-700 text-zinc-400 rounded hover:border-red-400 hover:text-red-400 transition-all"
-                >
-                  ver menos ↑
-                </button>
-              )}
-            </div>
-
           </section>
         )}
-      </div>
 
-      {/* Links */}
-      <div className="flex gap-4">
+        {/* Secciones dinámicas */}
+        {project.sections?.length > 0 && (
+          <section className="mb-14">
+            <h2 className="text-white text-2xl font-bold mb-8">
+              Documentación
+            </h2>
 
-        {project.repo && (
-          <a
-            href={project.repo}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-mono text-xs tracking-widest uppercase px-6 py-3 bg-lime-400 text-zinc-950 font-bold rounded hover:bg-lime-300 transition-colors"
-          >
-            ver código ↗
-          </a>
-        )
-        }
+            <div className="space-y-8">
+              {project.sections.map((section, index) => (
+                <div
+                  key={index}
+                  className="
+                    border-l-2
+                    border-lime-400
+                    pl-6
+                  "
+                >
+                  <h3
+                    className="
+                      text-white
+                      text-xl
+                      font-semibold
+                      mb-3
+                    "
+                  >
+                    {section.title}
+                  </h3>
 
-        {project.live && (
-          <a
-            href={project.live}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-mono text-xs tracking-widest uppercase px-6 py-3 border border-zinc-700 text-zinc-400 rounded hover:border-lime-400 hover:text-lime-400 transition-all"
-          >
-            ver demo ↗
-          </a>
+                  <p
+                    className="
+                      text-zinc-400
+                      leading-relaxed
+                    "
+                  >
+                    {section.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
+
+        {/* APIs */}
+        {project.api && (
+          <section className="mb-14">
+            <h2 className="text-white text-2xl font-bold mb-6">
+              APIs Integradas
+            </h2>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              {Object.entries(project.api).map(([key, value]) => (
+                <div
+                  key={key}
+                  className="
+                    border
+                    border-zinc-800
+                    rounded-xl
+                    p-5
+                    bg-zinc-900/40
+                  "
+                >
+                  <h3 className="text-lime-400 font-mono text-sm mb-2 uppercase">
+                    {key}
+                  </h3>
+
+                  <p
+                    className="
+                      text-zinc-500
+                      text-xs
+                      break-all
+                    "
+                  >
+                    {value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Galería */}
+        {project.gallery?.length > 0 && (
+          <section className="mb-14">
+            <h2 className="text-white text-2xl font-bold mb-6">
+              Capturas del proyecto
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {project.gallery.map((image, index) => (
+                <div
+                  key={index}
+                  className="
+                    overflow-hidden
+                    rounded-xl
+                    border
+                    border-zinc-800
+                  "
+                >
+                  <img
+                    src={image}
+                    alt={`${project.title}-${index}`}
+                    className="
+                      w-full
+                      h-full
+                      object-cover
+                      hover:scale-105
+                      transition-transform
+                      duration-500
+                    "
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Links */}
+        {(project.links?.repository ||
+          project.links?.liveDemo) && (
+          <section className="mt-16">
+            <div className="flex flex-wrap gap-4">
+
+              {project.links?.repository && (
+                <a
+                  href={project.links.repository}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="
+                    px-6
+                    py-3
+                    rounded-lg
+                    bg-lime-400
+                    text-zinc-950
+                    font-bold
+                    hover:bg-lime-300
+                    transition-colors
+                  "
+                >
+                  Ver código ↗
+                </a>
+              )}
+
+              {project.links?.liveDemo && (
+                <a
+                  href={project.links.liveDemo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="
+                    px-6
+                    py-3
+                    rounded-lg
+                    border
+                    border-zinc-700
+                    text-zinc-300
+                    hover:border-lime-400
+                    hover:text-lime-400
+                    transition-all
+                  "
+                >
+                  Ver demo ↗
+                </a>
+              )}
+            </div>
+          </section>
+        )}
+        
       </div>
     </main>
   );
